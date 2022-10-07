@@ -41,10 +41,18 @@ exports.deleteSauce = (req, res, next) => {
                 });
             }
         })
-        .catch(error => res.status(500).json({error}));
+        .catch(error => res.status(500).json({ error }));
 };
 
 exports.modifySauce = (req, res, next) => {
+    Sauce.findOne({ _id: req.params.id })
+        .then(sauce => {
+            const filename = sauce.imageUrl.split('/images/')[1];
+            fs.unlink(`images/${filename}`, (error) => {
+                if (error) throw error;
+            })
+        })
+        .catch (error => res.status(500).json({ error }));
     const sauceObject = req.file ? {
         ...JSON.parse(req.body.sauce),
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
