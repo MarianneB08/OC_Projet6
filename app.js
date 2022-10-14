@@ -1,3 +1,4 @@
+// Importation des différents packages
 const dotenv = require('dotenv');
 dotenv.config();
 const express = require('express');
@@ -6,6 +7,7 @@ const mongoose = require('mongoose');
 const app = express();
 const path = require('path');
 
+// Importation des routes
 const userRoutes = require('./routes/user');
 const sauceRoutes = require('./routes/sauce');
 
