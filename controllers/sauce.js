@@ -12,7 +12,7 @@ exports.createSauce = (req, res, next) => {
     });
     sauce.save()
         .then(() => res.status(201).json({ message: 'Sauce enregistrée' }))
-        .catch(error => res.status(400).json({ error }));
+        .catch(error => res.status(400).json({ message: "Échec de l'enregistrement" }));
 };
 
 exports.getAllSauces = (req, res, next) => {
@@ -31,13 +31,13 @@ exports.deleteSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
         .then(sauce => {
             if (sauce.userId != req.auth.userId) {
-                res.status(401).json({ message: 'Non autorisé !' });
+                res.status(401).json({ message: 'Suppression non autorisée' });
             } else {
                 const filename = sauce.imageUrl.split('/images/')[1];
                 fs.unlink(`images/${filename}`, () => {
                     Sauce.deleteOne({ _id: req.params.id })
                         .then(() => res.status(200).json({ message: 'Sauce supprimée' }))
-                        .catch(error => res.status(401).json({ error }));
+                        .catch(error => res.status(401).json({ message: 'Échec de la suppression' }));
                 });
             }
         })
@@ -63,11 +63,11 @@ exports.modifySauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
         .then((sauce) => {
             if (sauce.userId != req.auth.userId) {
-                res.status(401).json({ message: 'Non autorisé' });
+                res.status(401).json({ message: 'Modification non autorisée' });
             } else {
                 Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
                     .then(() => res.status(200).json({ message: 'Objet modifié' }))
-                    .catch(error => res.status(401).json({ error }));
+                    .catch(error => res.status(401).json({ message: 'Modification non autorisée' }));
             }
         })
         .catch(error => res.status(400).json({ error }));
@@ -88,7 +88,7 @@ exports.likeSauce = (req, res, next) => {
                             }
                         )
                             .then(() => res.status(201).json({ message: "Like +1" }))
-                            .catch(error => res.status(400).json({ error }));
+                            .catch(error => res.status(400).json({ message: "Action non autorisée" }));
                     }
                     break;
                 case -1: // Lorsque l'utilisateur clique sur "dislike" pour ajouter un "dislike"
@@ -101,7 +101,7 @@ exports.likeSauce = (req, res, next) => {
                             }
                         )
                             .then(() => res.status(201).json({ message: "Dislike +1" }))
-                            .catch(error => res.status(400).json({ error }));
+                            .catch(error => res.status(400).json({ message: "Action non autorisée" }));
                     }
                     break;
                 case 0: // Lorsque l'utilisateur reclique sur "like"/"dislike" pour revenir à aucun avis
@@ -114,7 +114,7 @@ exports.likeSauce = (req, res, next) => {
                             }
                         )
                             .then(() => res.status(201).json({ message: "Like 0" }))
-                            .catch(error => res.status(400).json({ error }));
+                            .catch(error => res.status(400).json({ message: "Action non autorisée" }));
                     } if (sauce.usersDisliked.includes(req.body.userId)) { // Clic sur "dislike" et retour à 0
                         Sauce.updateOne(
                             { _id: req.params.id },
@@ -124,10 +124,10 @@ exports.likeSauce = (req, res, next) => {
                             }
                         )
                             .then(() => res.status(201).json({ message: "Dislike 0" }))
-                            .catch(error => res.status(400).json({ error }));
+                            .catch(error => res.status(400).json({ message: "Action non autorisée" }));
                     }
                     break;
             }
         })
-        .catch(error => res.status(404).json({ error }));
+        .catch(error => res.status(404).json({ message: "Action non autorisée" }));
 };

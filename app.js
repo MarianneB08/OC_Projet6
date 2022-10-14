@@ -22,7 +22,6 @@ mongoose.connect(`mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGOD
 // Middlewares
 app.use(express.json());
 app.use(cors());
-
 app.use('/api/sauces', sauceRoutes);
 app.use('/api/auth', userRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));
